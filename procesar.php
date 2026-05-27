@@ -36,51 +36,5 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     //Expresion final
     $totalPagar = $subTotal - $descuento;
 
-    // Nombres para mostrar
-    $nombreComponente = match($componenteRecibido){
-        'procesador' => 'Procesador Intel Core I7',
-        'ram' => 'Memoria RAM 16GB DDR4',
-        'almacenamiento' => 'Memoria SSD',
-        default => 'No seleccionado',
-    };
 
-    // Formatear valores
-    $precioF = number_format($precioUnitario, 2, ',', '.');
-    $subTotalF = number_format($subTotal, 2, ',', '.');
-    $descuentoF = number_format($descuento, 2, ',', '.');
-    $totalF = number_format($totalPagar, 2, ',', '.');
-
-    // Mostrar resultados
-    echo "<!DOCTYPE html>
-<html lang='es'>
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css' rel='stylesheet'>
-    <title>Resultado de Cotización</title>
-</head>
-<body class='bg-light'>
-    <div class='container mt-5'>
-        <div class='row justify-content-center'>
-            <div class='col-md-6'>
-                <div class='card shadow'>
-                    <div class='card-header bg-dark text-white'>
-                        <h4 class='mb-0'>Resultado de la Cotización</h4>
-                    </div>
-                    <div class='card-body'>
-                        <p><strong>Componente:</strong> $nombreComponente</p>
-                        <p><strong>Cantidad:</strong> $cantidad</p>
-                        <p><strong>Precio unitario:</strong> \$$ $precioF</p>
-                        <p><strong>Subtotal:</strong> \$$ $subTotalF</p>
-                        <p><strong>Descuento (10%):</strong> \$$ $descuentoF</p>
-                        <hr>
-                        <h5 class='text-success fw-bold'>Total a Pagar: \$$ $totalF</h5>
-                        <a href='index.html' class='btn btn-secondary mt-3'>Volver</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>";
 }
