@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Cotizador de repuestos tecnológicos</title>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="mb-0">Cotizador de hardware</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="procesar.php" method="POST">
+                            <div class="mb-3">
+                                <label for="componente" class="form-label">Seleccione un componente:</label>
+                                <select class="form-select" name="componente" id="componente" required>
+                                    <option value="" disabled selected>Elija una opción</option>
+                                    <option value="procesador">Procesador Intel Core I7</option>
+                                    <option value="ram">Memoria RAM 16GB DDR4</option>
+                                    <option value="almacenamiento">Memoria SSD</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cantidad" class="form-label">Cantidad Requerida:</label>
+                                <input type="number" class="form-control" name="cantidad" id="cantidad" min="1" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="institucional" name="institucional"
+                                    value="1">
+                                <label class="form-check-label" for="institucional">Aplicar descuento institucional del
+                                    10%</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Procesar Cotización</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
