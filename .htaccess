@@ -1,0 +1,8 @@
+Options -Indexes
+DirectoryIndex index.php login.php
+
+# Permitir escritura en la carpeta para SQLite
+<Files "sistema.sqlite">
+    Order Allow,Deny
+    Allow from all
+</Files>
