@@ -41,27 +41,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     //Expresion final
     $totalPagar = $subTotal - $descuento;
+    //Inserción de los datos
+    try {
+        require 'conexion.php';
+        $stmt = $pdo->prepare("INSERT INTO cotizaciones (componente, cantidad, total) VALUES (?,?,?)");
+        $stmt->execute([$componenteRecibido, $cantidad, $totalPagar]);
 
-    //Salida de los datos, Mezclar PHP con HTML
-    echo "<!DOCTYPE HTML><html lang='es'><head><meta charset='UTF-8'>";
-    echo "<title>Resultado de la Cotización</title>";
-    echo "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css' rel='stylesheet'>";
-    echo "</head><body class ='bg-light'><div class='container mt-5'><div class='row'>";
-    echo "<div class='alert alert-success shadow'>";
-    echo "<h2 class='alert-heading'>Resumen de su pedido</h2>";
-    echo "<hr>";
-    echo "<p><strong>Componente:</strong> " . htmlspecialchars($componenteRecibido) . "</p>";
-    echo "<p><strong>Cantidad:</strong> " . htmlspecialchars((string)$cantidad) . " unidades</p>";
-    echo "<p><strong>Precio Unitario:</strong> $" . number_format($precioUnitario, 2) . "</p>";
-    echo "<p><strong>Sub Total:</strong> $" . number_format($subTotal, 2) . "</p>";
-    if ($esInstitucional == true) {
-        echo "<p class='text-danger'> <strong>Descuento Institucional con el " . ($porcentajeDescuento * 100) . "%:</strong> $" . number_format($descuento, 2) . "</p>";
-        echo "<h3> <strong>Total a pagar:</strong> $" . number_format($totalPagar, 2) . "</h3>";
-        echo "<a href='index.html' class='btn btn-outline-success mt-3'>Realizar otra cotizacion</a>";
-        echo "</div></div></body></html>";
-    } else {
-        echo "<h3> <strong>Total a pagar:</strong> $" . number_format($totalPagar, 2) . "</h3>";
-        echo "<a href='index.html' class='btn btn-outline-success mt-3'>Realizar otra cotizacion</a>";
-        echo "</div></div></body></html>";
+        //Si la inserción es exitosa, redirigimos al dashboard
+        header("Location: dashboard.php?msg=guardado");
+        exit();
+    } catch (PDOException $e) {
+        //Si SQLite falla nos muesrta este error
+        die("<div style='background: #ffcccc; padding: 20px; border:1px; solid red; font-family: sans-serif';>'
+            <h2 style='color: red;'>Error en la BDD</h2>
+            <p><strong>Mensaje del servidor:</strong>" . $e->getMessage() . "</p>
+        </div>");
     }
+
+} else {
+    //Si el acceso a esta pagina es directo, redirigimos al formulario
+    header("Location: index.php");
+    exit();
 }

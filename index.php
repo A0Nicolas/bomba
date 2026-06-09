@@ -1,13 +1,12 @@
-
 <?php
 //Manejo de la sesion
 session_start();
-//Si todo estpa bien vamos a redirigir al dashboard
-if (isset($_SESSION['admin_logged_in'])) {
-    header("Location: index.php");
+//SI NO está logueado, redirigir al login
+if (!isset($_SESSION['admin_logged_in'])) {
+    header("Location: login.php");
     exit;
 }
-
+// Si está logueado, mostrar el cotizador
 ?>
 
 <!DOCTYPE html>

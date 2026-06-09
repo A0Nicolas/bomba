@@ -1,7 +1,7 @@
 <?php
 //Manejo de la sesion
 session_start();
-//Si todo estpa bien vamos a redirigir al dashboard
+//Si ya está logueado, redirigir al index (cotizador)
 if (isset($_SESSION['admin_logged_in'])) {
     header("Location: index.php");
     exit;
@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['username'] = $usuarioDB['username'];
         header("Location: index.php");
+        exit;
     } else {
         $error = "Credenciales incorrectas.";
     }
@@ -44,20 +45,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h3 class="text-center mb-4">Acceso Seguro</h3>
 
         <?php if ($error): ?>
-            <div class="alert alert-danger"><?= $error ?></div>
+            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
         <form method="POST">
             <div class="mb-3">
-                <label for="">Usuario</label>
+                <label class="form-label">Usuario</label>
                 <input type="text" class="form-control" name="username" required>
             </div>
             <div class="mb-3">
-                <label for="">Contraseña</label>
+                <label class="form-label">Contraseña</label>
                 <input type="password" class="form-control" name="password" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Ingresar</button>
         </form>
+        <div class="mt-3 text-center text-muted small">
+            <p>Usuario: admin<br>Contraseña: espe2026</p>
+        </div>
     </div>
 </body>
 
