@@ -7,32 +7,31 @@ if (!isset($_SESSION['admin_logged_in'])) {
 require 'conexion.php';
 
 $error = '';
-$exito = '';
 
-//Obtener el ID de la cotización a editar
+// Obtener el ID de la cotización a editar
 $id = (int) ($_GET['id'] ?? 0);
 if ($id <= 0) {
     header("Location: dashboard.php");
     exit;
 }
 
-//Obtener los datos actuales
+// Obtener los datos actuales
 $stmt = $pdo->prepare("SELECT * FROM cotizaciones WHERE id = ?");
 $stmt->execute([$id]);
-$cotizacion = $stmt->fetch(PDO::FETCH_ASSOC);
+$cotizacion = $stmt->fetch();
 
 if (!$cotizacion) {
     header("Location: dashboard.php");
     exit;
 }
 
-//Procesar el formulario de edición
+// Procesar el formulario de edición
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $componente = $_POST['componente'] ?? '';
     $cantidad = (int) ($_POST['cantidad'] ?? 0);
     $descuentoPorcentaje = (float) ($_POST['descuento'] ?? 0);
     
-    //Precios de los componentes
+    // Precios de los componentes
     $precioUnitario = match ($componente) {
         'procesador' => 350.50,
         'ram' => 85.00,
@@ -57,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $descuento = $subTotal * $descuentoPorcentaje;
         $totalPagar = $subTotal - $descuento;
         
-        //Actualizar en la base de datos
+        // Actualizar en la base de datos
         $stmt = $pdo->prepare("UPDATE cotizaciones SET componente = ?, cantidad = ?, total = ? WHERE id = ?");
         if ($stmt->execute([$componente, $cantidad, $totalPagar, $id])) {
             header("Location: dashboard.php?msg=editado");
@@ -66,6 +65,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = "Error al actualizar el registro";
         }
     }
+}
+
+function precioUnitarioOriginal($componente) {
+    return match ($componente) {
+        'procesador' => 350.50,
+        'ram' => 85.00,
+        'almacenamiento' => 120.00,
+        'tarjeta grafica' => 350.00,
+        'placa madre' => 110.00,
+        'fuente de poder' => 65.00,
+        'gabinete' => 55.00,
+        'monitor' => 130.00,
+        'refrigeracion' => 120.00,
+        'audifonos' => 150.00,
+        'microfono' => 100.00,
+        'silla gamer' => 250.00,
+        'teclado' => 80.00,
+        default => 0.00,
+    };
 }
 ?>
 
@@ -129,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="mb-3">
                                 <label class="form-label d-block">Descuento Institucional:</label>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" name="descuento" value="0" <?= $cotizacion['total'] / (precioUnitarioOriginal($cotizacion['componente']) * $cotizacion['cantidad']) > 0.99 ? 'checked' : '' ?>>
+                                    <input type="radio" class="form-check-input" name="descuento" value="0" checked>
                                     <label class="form-check-label">Ninguno (0%)</label>
                                 </div>
                                 <div class="form-check form-check-inline">
@@ -160,25 +178,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </body>
 
 </html>
-
-<?php
-//Función auxiliar para obtener precio unitario original
-function precioUnitarioOriginal($componente) {
-    return match ($componente) {
-        'procesador' => 350.50,
-        'ram' => 85.00,
-        'almacenamiento' => 120.00,
-        'tarjeta grafica' => 350.00,
-        'placa madre' => 110.00,
-        'fuente de poder' => 65.00,
-        'gabinete' => 55.00,
-        'monitor' => 130.00,
-        'refrigeracion' => 120.00,
-        'audifonos' => 150.00,
-        'microfono' => 100.00,
-        'silla gamer' => 250.00,
-        'teclado' => 80.00,
-        default => 0.00,
-    };
-}
-?>

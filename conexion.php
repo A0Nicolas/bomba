@@ -1,34 +1,42 @@
 <?php
-//Conexion hacia PHP
 declare(strict_types=1);
-try {
-    //Conexion hacia la bdd SQLite
-    $pdo = new PDO('sqlite:sistema.sqlite');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    //Creamos las tablas
+$host = 'mysql';
+$dbname = 'sistema_cotizaciones';
+$username = 'admin';
+$password = 'espe2026';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    
+    // Crear tablas si no existen
     $pdo->exec("CREATE TABLE IF NOT EXISTS cotizaciones(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        componente TEXT NOT NULL,
-        cantidad INTEGER NOT NULL,
-        total REAL NOT NULL, 
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        componente VARCHAR(100) NOT NULL,
+        cantidad INT NOT NULL,
+        total DECIMAL(10,2) NOT NULL,
         fecha DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
-
-    //Tabla para los usuarios (Administrador)
+    
     $pdo->exec("CREATE TABLE IF NOT EXISTS usuarios(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL
     )");
-
-    //La insercion del usuario por defecto si la tabla está vacia
-    //Vamos a utilizar password hash
-    $stmt = $pdo->query("SELECT COUNT (*) FROM usuarios");
+    
+    // Crear usuario admin si no existe
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE username = 'admin'");
+    $stmt->execute();
     if ($stmt->fetchColumn() == 0) {
         $hash = password_hash('espe2026', PASSWORD_DEFAULT);
-        $pdo->exec("INSERT INTO usuarios (username, password) VALUES ('admin', '$hash')");
+        $stmt = $pdo->prepare("INSERT INTO usuarios (username, password) VALUES ('admin', ?)");
+        $stmt->execute([$hash]);
+        error_log("Usuario admin creado con contraseña: espe2026");
     }
+    
 } catch (PDOException $e) {
-    die("Error de conexion: " . $e->getMessage());
+    die("Error de conexión MySQL: " . $e->getMessage());
 }
+?>
